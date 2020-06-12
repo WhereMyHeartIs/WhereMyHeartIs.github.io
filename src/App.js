@@ -1,34 +1,57 @@
 import React, { Component } from 'react';
-import logo from './img/logo.png';
-import screen1 from './img/1.png';
+import ReactGA from 'react-ga';
+import $ from 'jquery';
 import './App.css';
-import { render } from '@testing-library/react';
+import Header from './components/Header';
+import About from './components/About';
+import Demo from './components/Demo';
+import Download from './components/Download';
 
 class App extends Component{
+
+  constructor(props){
+    super(props);
+    this.state = {
+      foo: 'bar',
+      aboutus: {},
+    };
+
+    ReactGA.initialize('UA-110570651-1');
+    ReactGA.pageview(window.location.pathname);
+
+  }
+  getInfo(){
+    $.ajax({
+      url:'./aboutUs.json',
+      dataType:'json',
+      cache: false,
+      success: function(data){
+        this.setState({aboutUs: data});
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.log(err);
+        alert(err);
+      }
+    });
+  }
+
+  componentDidMount(){
+    this.getInfo();
+  }
+
+
   render(){
      return (
         <div className="App">
-        <div  className="bg">
-        <h1>Where My Heart Is</h1>
-        <img src={logo} alt="Logo" />;
-        <h1>About Our Game</h1>
-        <p className="Intro">About the game place holder 1233333</p>
-        <img src={screen1} alt="screen1" />;
-        <h1>Game Play</h1>
-        <p className="Intro">More Game play gif</p>
-        <h1>Avaliable Now For PC</h1>
-        <p className="Intro">Windows and Mac Download link</p>
-        <h1>About the us</h1>
-        <p className="Intro">about us :D team members</p>
-        <h1>Random Title</h1>  
-        </div>    
+          <div  className="bg">
+            <Header data={this.state.aboutus.main}/>
+            <Demo data={this.state.aboutus.main}/>
+            <Download data = {this.state.aboutus.main}/>
+            <About data={this.state.aboutus.main}/>
+          </div>    
         </div>
       );
   }
-}
-function Header() {
-  // Import result is the URL of your image
-  return <img src={logo} alt="Logo" />;
 }
 
 
